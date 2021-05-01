@@ -32,8 +32,11 @@ def plot_scatter(img, name, color, mask = None):
   fig = plt.figure(figsize=(12,3))
   for idx, col in enumerate(color):
     histr = cv2.calcHist([img],[idx],None,[256],[0,256])
-    plt.plot(histr, color = col)
+    plt.plot(histr, color = col, label = name[idx])
     plt.xlim([0,256])
+  leg = plt.legend(loc='best')
+  for l in leg.legendHandles:
+    l.set_linewidth(10)
   plt.title(name)
   plt.show()
 
@@ -77,13 +80,18 @@ def moving_w(k, img, mask, funct):
       img[idx[0][i], idx[1][i], :] = result[0]
   return img
 
-def otsu_thresh(img, band):
-  """Codigo para extraer de manera automatica un valor threshold.
+def hist_thresh(img, banda):
+  """Codigo para extraer de manera automatica un valor threshold a partir de 
+  maximizar la variancia entre los grupos o bins del histograma.
   Codigo basado en: https://docs.opencv.org/master/d7/d4d/tutorial_py_thresholding.html
+  img: imagen a analizar
+  banda: banda donde se hara la binarizacion
+  Se retorna la mascara binaria
   """
-  bins_num = np.max(img)
+  imgh = img[:,:,banda]
+  bins_num = np.max(imgh)
   # Obtenemos histograma de la imagen
-  hist, bin_edges = np.histogram(img, bins=bins_num)
+  hist, bin_edges = np.histogram(imgh, bins=bins_num)
   # Normalizamos el histograma
   hist = np.divide(hist.ravel(), hist.max())
   # Calculamos el centro de los bins dels histograma
@@ -95,11 +103,16 @@ def otsu_thresh(img, band):
   mean2 = (np.cumsum((hist * bin_mids)[::-1]) / weight2[::-1])[::-1]
 
   inter_class_variance = weight1[:-1] * weight2[1:] * (mean1[:-1] - mean2[1:]) ** 2
-  # Maximize the inter_class_variance function val
+  # Maximizamos la varianzia entre clases escogiendo el maximo valor mas repetido
   index_of_max_val = np.argmax(inter_class_variance)
   thresh = bin_mids[:-1][index_of_max_val]
-  print("Otsu's algorithm implementation thresholding result: ", thresh)
-  return thresh
+  print("Los valores escogidos para el thresh, en la banda {} son:{}, {}".format(banda, np.max(img[:,:,banda]) , thresh))
+  #Realizamos el threshold con el valor maximo y el obtenido en el metodo anterior
+  mask_min = cv2.threshold(img[:,:,banda], thresh, np.max(img[:,:,banda]), cv2.THRESH_BINARY)
+  mask_min = np.array(mask_min[1])
+  #Creamos la mascara binaria
+  bin_mask_min = np.where(mask_min > 0, 1, 0)
+  return bin_mask_min
 
 def autocontraste(x,a,b):
     '''Realiza el autocontraste llevando los puntos a y b a 0 y 225, respectivamente'''
