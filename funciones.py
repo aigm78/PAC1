@@ -14,11 +14,11 @@ def plot(img, name, color_legend= ['R: Red','G: Green','B: Blue']):
   fig = plt.figure(figsize=(12,3))
   fig.suptitle(name + ': RGB Space', fontsize=16)
   ax = fig.add_subplot(1,img.shape[2]+1, 1)
-  ax.imshow(img_rgb)
+  ax.imshow(img)
   ax.set_xlabel(name,fontsize=14)
   for idx in range(img.shape[2]):
     ax = fig.add_subplot(1, 4, idx+2) 
-    ax.imshow(img_rgb[:,:,idx]) 
+    ax.imshow(img[:,:,idx]) 
     ax.set_xlabel(color_legend[idx],fontsize=14)
   plt.show()
 
