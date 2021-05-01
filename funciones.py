@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 import skimage.measure 
 
 
-def plot(img, name, color_legend= ['R: Red','G: Green','B: Blue']):
+def plot(img, name, color_legend= ['R: Red','G: Green','B: Blue'], fig_scatter):
   """Creamos una grafica donde cada banda de la imagen es visualizada separadamente
       de esta manera podemos ver que bandas capturan mejor la aberracion
       img: imagen 
       name:nombre del plot
-      color_legend: lista con los nombres de cada subplot"""
-  fig = plt.figure(figsize=(25,4))
+      color_legend: lista con los nombres de cada subplot
+      fig_scatter: scatterplot de las bandas objeto plt"""
+  fig = plt.figure(figsize=(25,5))
   fig.suptitle(name + ': RGB Space', fontsize=16)
   ax = fig.add_subplot(1,img.shape[2]+1, 1)
   ax.imshow(img)
@@ -20,6 +21,8 @@ def plot(img, name, color_legend= ['R: Red','G: Green','B: Blue']):
     ax = fig.add_subplot(1, 4, idx+2) 
     ax.imshow(img[:,:,idx]) 
     ax.set_xlabel(color_legend[idx],fontsize=14)
+  ax = fig.add_subplot(1,img.shape[2]+1, 5) 
+  ax = fig_scatter
   plt.show()
 
 def plot_scatter(img, name, color):
@@ -28,12 +31,13 @@ def plot_scatter(img, name, color):
       img: imagen 
       name:nombre del plot
       color_legend: lista con los colores de cada subplot"""
+  fig = plt.figure()
   for idx, col in enumerate(color):
     histr = cv2.calcHist([img],[idx],None,[256],[0,256])
     plt.plot(histr, color = col)
     plt.xlim([0,256])
   plt.title(name)
-  plt.show()
+  return fig
 
 def moving_w(k, img, mask, funct):
   """Metodo donde dando un kernel (matriz), movimiento 
