@@ -12,7 +12,7 @@ def plot(img, name, color_legend):
       name:nombre del plot
       color_legend: lista con los nombres de cada subplot"""
   fig = plt.figure(figsize=(12,3))
-  fig.suptitle(name + ': RGB Space', fontsize=16)
+  fig.suptitle(name, fontsize=16)
   ax = fig.add_subplot(1, 4, 1)
   ax.imshow(img)
   ax.set_xlabel(name,fontsize=14)
