@@ -107,6 +107,7 @@ def hist_thresh(img, banda):
   index_of_max_val = np.argmax(inter_class_variance)
   thresh = bin_mids[:-1][index_of_max_val]
   print("Los valores escogidos para el thresh, en la banda {} son:{}, {}".format(banda, np.max(img[:,:,banda]) , thresh))
+  
   #Realizamos el threshold con el valor maximo y el obtenido en el metodo anterior
   mask_min = cv2.threshold(img[:,:,banda], thresh, np.max(img[:,:,banda]), cv2.THRESH_BINARY)
   mask_min = np.array(mask_min[1])
@@ -140,37 +141,16 @@ def realce(x,A,B):
         y = round(((255-B)*x+(255*(B-A)))/(255-A))
     return y
 
-def logaritmo(x,alfa=0.5):
-    c = 223/np.log(1+(np.e**alfa-1)*223)
+def logaritmo(x, maxv, alfa=0.5):
+    c = maxv/np.log(1+(np.e**alfa-1)*maxv)
     y=c*np.log(1+(np.e**alfa-1)*x)
     return round(y)
 
-def exponencial(x,alfa=10):
-    x=x/266
-    c = 266/((1+alfa)-1)
+def exponencial(x, maxv, alfa=10):
+    x=x/maxv
+    c = maxv/((1+alfa)-1)
     y=c*((1+alfa)**x-1)
     return y
 
 
-def filtro_prueba(img):
-  # gamma = 0.9
-  # lookUpTable = np.empty((1,256), np.uint8)
-  # for i in range(256):
-  #     lookUpTable[0,i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
-  # res = cv2.LUT(img, lookUpTable)
-  # return (res, True)
-  #Filtro donde se opera en todos los pixeles de la MV
-  h,l,s = cv2.split(img)
-  # quitar sturacion
-  new_l = l+100
-  new_s = s-100
-  hsv_new = cv2.merge([h, new_l, new_s])
-  return (hsv_new, True)
 
-def filtro_prueba2(img):
-  #Filtro donde se usan todos de contexto y solo se cambia el central
-  h,s,v = cv2.split(img)
-  # quitar sturacion
-  sin_val = cv2.multiply(s, 0.6).astype(np.uint8)
-  hsv_new = cv2.merge([h,s,sin_val])
-  return (np.argmin(img), False)
