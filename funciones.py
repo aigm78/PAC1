@@ -77,7 +77,9 @@ def moving_w(k, img, mask, funct):
     if result[1]:
       img[cols[0]:cols[1], fils[0]:fils[1], :] = result[0]
     else:
-      img[idx[0][i], idx[1][i], :] = result[0]
+      img[idx[0][i], idx[1][i], 0] = result[0][0]
+      img[idx[0][i], idx[1][i], 1] = result[0][1]
+      img[idx[0][i], idx[1][i], 2] = result[0][2]
   return img
 
 def hist_thresh(img, banda):
@@ -90,6 +92,7 @@ def hist_thresh(img, banda):
   """
   imgh = img[:,:,banda]
   bins_num = np.max(imgh)
+  bins_num = 255
   # Obtenemos histograma de la imagen
   hist, bin_edges = np.histogram(imgh, bins=bins_num)
   # Normalizamos el histograma
@@ -194,12 +197,13 @@ def scaleim(img, alpha):
 
 def generar_franja(img, alphaR, alphaB):
   y,x,z = img.shape
-  copyim =img
+  copyim =img.copy()
   copyim[:,:,0] = scaleim(copyim[:,:,0], alphaB)
   copyim[:,:,2] = scaleim(copyim[:,:,2], alphaR)
   return copyim
 
-def corregir_franja(img):
+def corregir_franja(copyimg):
+  img =copyimg.copy()
   k = 0
   green = img[:,:,1]
   C = np.empty((len(np.arange(0.8, 1.21, 0.02)),3))
@@ -221,7 +225,13 @@ def corregir_franja(img):
   alphaR = C[maxindR,2]
   alphaB = C[maxindB,2]
   print("Las alphas de aberracion de esta images son rojo: {}, azul:{}".format(alphaR, alphaB))
-  imCORRECT = copyim
+  imCORRECT = img
   imCORRECT[:,:,2] = scaleim(img[:,:,2], 1/alphaR)
   imCORRECT[:,:,0] = scaleim(img[:,:,0], 1/alphaB)
   return imCORRECT
+
+def median(img):
+  x = np.median[img{:,:,0])
+  y = np.median[img{:,:,1])
+  z = np.median[img{:,:,2])
+  return [[x,y,z], False]
