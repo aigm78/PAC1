@@ -5,24 +5,21 @@ import matplotlib.pyplot as plt
 import skimage.measure 
 
 
-def plot(img, name, color_legend, fig_scatter):
+def plot(img, name, color_legend):
   """Creamos una grafica donde cada banda de la imagen es visualizada separadamente
       de esta manera podemos ver que bandas capturan mejor la aberracion
       img: imagen 
       name:nombre del plot
-      color_legend: lista con los nombres de cada subplot
-      fig_scatter: scatterplot de las bandas objeto plt"""
-  fig = plt.figure(figsize=(25,5))
+      color_legend: lista con los nombres de cada subplot"""
+  fig = plt.figure(figsize=(12,3))
   fig.suptitle(name + ': RGB Space', fontsize=16)
-  ax = fig.add_subplot(1, 5, 1)
+  ax = fig.add_subplot(1, 4, 1)
   ax.imshow(img)
   ax.set_xlabel(name,fontsize=14)
   for idx in range(img.shape[2]):
-    ax = fig.add_subplot(1, 5, idx+2) 
+    ax = fig.add_subplot(1, 4, idx+2) 
     ax.imshow(img[:,:,idx]) 
     ax.set_xlabel(color_legend[idx],fontsize=14)
-  ax = fig.add_subplot(1, 5, 5) 
-  ax = fig_scatter
   plt.show()
 
 def plot_scatter(img, name, color, mask = None):
@@ -32,12 +29,13 @@ def plot_scatter(img, name, color, mask = None):
       name:nombre del plot
       color: lista con los colores de cada subplot
       mask: opcional se anade si se quiere ver en el histograma solo una parte de la imagen"""
-  fig = plt.figure()
+  fig = plt.figure(figsize=(12,3))
   for idx, col in enumerate(color):
     histr = cv2.calcHist([img],[idx],None,[256],[0,256])
-    ax.plot(histr, color = col)
-    ax.xlim([0,256])
-  return fig
+    plt.plot(histr, color = col)
+    plt.xlim([0,256])
+  plt.title(name)
+  plt.show()
 
 def moving_w(k, img, mask, funct):
   """Metodo donde dando un kernel (matriz), movimiento 
