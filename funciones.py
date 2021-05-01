@@ -231,7 +231,7 @@ def corregir_franja(copyimg):
   return imCORRECT
 
 def median(img):
-  x = np.median[img[:,:,0])
-  y = np.median[img[:,:,1])
-  z = np.median[img[:,:,2])
+  x = np.median(img[:,:,0])
+  y = np.median(img[:,:,1])
+  z = np.median(img[:,:,2])
   return [[x,y,z], False]
