@@ -14,14 +14,14 @@ def plot(img, name, color_legend, fig_scatter):
       fig_scatter: scatterplot de las bandas objeto plt"""
   fig = plt.figure(figsize=(25,5))
   fig.suptitle(name + ': RGB Space', fontsize=16)
-  ax = fig.add_subplot(1,img.shape[2]+1, 1)
+  ax = fig.add_subplot(0, 5, 1)
   ax.imshow(img)
   ax.set_xlabel(name,fontsize=14)
   for idx in range(img.shape[2]):
-    ax = fig.add_subplot(1, 4, idx+2) 
+    ax = fig.add_subplot(1, 5, idx+1) 
     ax.imshow(img[:,:,idx]) 
     ax.set_xlabel(color_legend[idx],fontsize=14)
-  ax = fig.add_subplot(1,img.shape[2]+1, 5) 
+  ax = fig.add_subplot(1, 5, 4) 
   ax = fig_scatter
   plt.show()
 
