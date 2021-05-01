@@ -1,20 +1,31 @@
-def plot(img, name):
+def plot(img, name, color_legend= ['R: Red','G: Green','B: Blue']):
   """Creamos una grafica donde cada banda de la imagen es visualizada separadamente
-      de esta manera podemos ver que bandas capturan mejor la aberracion"""
-  fig = plt.figure(figsize=(12,3))
-  fig.suptitle(name, fontsize=16)
-  for idx in range(img.shape[2]):
-      ax = fig.add_subplot(1, 3, idx+1) 
-      ax.imshow(img[:,:,idx]) 
-  plt.show()
+      de esta manera podemos ver que bandas capturan mejor la aberracion
+      img: imagen 
+      name:nombre del plot
+      color_legend: lista con los nombres de cada subplot"""
+    fig = plt.figure(figsize=(12,3))
+    fig.suptitle(name + ': RGB Space', fontsize=16)
+    ax = fig.add_subplot(1,img.shape[2]+1, 1)
+    ax.imshow(img_rgb)
+    ax.set_xlabel(name,fontsize=14)
+    for idx in range(img.shape[2]):
+        ax = fig.add_subplot(1, 4, idx+2) 
+        ax.imshow(img_rgb[:,:,idx]) 
+        ax.set_xlabel(color_legend[idx],fontsize=14)
+    plt.show()
 
-def plot_scatter(img, color):
+def plot_scatter(img, name, color):
   """Creamos una grafica donde cada banda de la imagen es representada en forma de histograma
-      esto nos ayuda a ver la distribucion de los valores"""
+      esto nos ayuda a ver la distribucion de los valores
+      img: imagen 
+      name:nombre del plot
+      color_legend: lista con los nombres de cada subplot"""
   for idx, col in enumerate(color):
     histr = cv2.calcHist([img],[idx],None,[256],[0,256])
     plt.plot(histr, color = col)
     plt.xlim([0,256])
+  plt.title(name)
   plt.show()
 
 def moving_w(k, img, mask, funct):
