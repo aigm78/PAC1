@@ -220,7 +220,7 @@ def corregir_franja(img):
   maxindB = np.argmax(C[:,1])
   alphaR = C[maxindR,2]
   alphaB = C[maxindB,2]
-  print("Las alphas de aberracion de esta images son rojo: {}, azul:{}".format(alphaR, alphaB)
+  print("Las alphas de aberracion de esta images son rojo: {}, azul:{}".format(alphaR, alphaB))
   imCORRECT = copyim
   imCORRECT[:,:,2] = scaleim(img[:,:,2], 1/alphaR)
   imCORRECT[:,:,0] = scaleim(img[:,:,0], 1/alphaB)
