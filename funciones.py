@@ -27,7 +27,7 @@ def plot_scatter(img, name, color):
       esto nos ayuda a ver la distribucion de los valores
       img: imagen 
       name:nombre del plot
-      color_legend: lista con los nombres de cada subplot"""
+      color_legend: lista con los colores de cada subplot"""
   for idx, col in enumerate(color):
     histr = cv2.calcHist([img],[idx],None,[256],[0,256])
     plt.plot(histr, color = col)
