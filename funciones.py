@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import skimage.measure 
 
 
-def plot(img, name, color_legend= ['R: Red','G: Green','B: Blue'], fig_scatter):
+def plot(img, name, color_legend, fig_scatter):
   """Creamos una grafica donde cada banda de la imagen es visualizada separadamente
       de esta manera podemos ver que bandas capturan mejor la aberracion
       img: imagen 
