@@ -153,4 +153,29 @@ def exponencial(x, maxv, alfa=10):
     return y
 
 
+def filtro_prueba(img):
+  # gamma = 0.9
+  # lookUpTable = np.empty((1,256), np.uint8)
+  # for i in range(256):
+  #     lookUpTable[0,i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
+  # res = cv2.LUT(img, lookUpTable)
+  # return (res, True)
+  #Filtro donde se opera en todos los pixeles de la MV
+  h,l,s = cv2.split(img)
+  # quitar sturacion
+  new_l = l+100
+  new_s = s-100
+  hsv_new = cv2.merge([h, new_l, new_s])
+  return (hsv_new, True)
 
+def filtro_prueba2(img):
+  plt.imshow(img)
+  plt.show()
+  plot_scatter(img, "LAB bandas", ['Y','G','B'])
+  plt.show()
+  #Filtro donde se usan todos de contexto y solo se cambia el central
+  h,s,v = cv2.split(img)
+  # quitar sturacion
+  sin_val = cv2.multiply(s, 0.6).astype(np.uint8)
+  hsv_new = cv2.merge([h,s,sin_val])
+  return (np.argmin(img), False)
