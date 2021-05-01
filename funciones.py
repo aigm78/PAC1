@@ -28,13 +28,12 @@ def plot_scatter(img, name, color):
       img: imagen 
       name:nombre del plot
       color_legend: lista con los colores de cada subplot"""
-  fig = plt.figure(figsize=(8, 6))
   for idx, col in enumerate(color):
     histr = cv2.calcHist([img],[idx],None,[256],[0,256])
     plt.plot(histr, color = col)
     plt.xlim([0,256])
   plt.title(name)
-  return fig
+  plt.show()
 
 def moving_w(k, img, mask, funct):
   """Metodo donde dando un kernel (matriz), movimiento 
