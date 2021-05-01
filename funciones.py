@@ -152,30 +152,76 @@ def exponencial(x, maxv, alfa=10):
     y=c*((1+alfa)**x-1)
     return y
 
+def im_resize(img, alpha):
+  width = int(img.shape[1] * alpha)
+  height = int(img.shape[0] * alpha)
+  dim = (width, height)
+  im2 = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
+  return im2
 
-def filtro_prueba(img):
-  # gamma = 0.9
-  # lookUpTable = np.empty((1,256), np.uint8)
-  # for i in range(256):
-  #     lookUpTable[0,i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
-  # res = cv2.LUT(img, lookUpTable)
-  # return (res, True)
-  #Filtro donde se opera en todos los pixeles de la MV
-  h,l,s = cv2.split(img)
-  # quitar sturacion
-  new_l = l+100
-  new_s = s-100
-  hsv_new = cv2.merge([h, new_l, new_s])
-  return (hsv_new, True)
+def mean2(x):
+    y = np.sum(x) / np.size(x);
+    return y
 
-def filtro_prueba2(img):
-  plt.imshow(img)
-  plt.show()
-  plot_scatter(img, "LAB bandas", ['Y','G','B'])
-  plt.show()
-  #Filtro donde se usan todos de contexto y solo se cambia el central
-  h,s,v = cv2.split(img)
-  # quitar sturacion
-  sin_val = cv2.multiply(s, 0.6).astype(np.uint8)
-  hsv_new = cv2.merge([h,s,sin_val])
-  return (np.argmin(img), False)
+def corr2(a,b):
+    a = a - mean2(a)
+    b = b - mean2(b)
+    r = (a*b).sum() / np.sqrt((a*a).sum() * (b*b).sum());
+    return r
+
+def scaleim(img, alpha):
+  ydim,xdim = img.shape
+  if (alpha > 1):
+    im2 = im_resize(img, alpha)
+    ydim2,xdim2 = im2.shape
+    cy = int(np.floor((ydim2-ydim)/2))
+    cx = int(np.floor((xdim2-xdim)/2))
+    im2 = im2[cy:(ydim2-cy), cx:(xdim2-cx)]
+    im2 = cv2.resize(im2, (xdim, ydim), interpolation = cv2.INTER_CUBIC)
+
+  else:
+    im2 = im_resize(img, alpha)
+    ydim2,xdim2 = im2.shape
+    im3 = np.zeros((ydim, xdim))
+    cy = int(np.floor((ydim-ydim2)/2))
+    cx = int(np.floor((xdim-xdim2)/2))
+    im3[cy:(ydim2+cy), cx:(xdim2+cx)] = im2
+    idx = np.where(im3 == 0)
+    for i in range(len(idx[0])):
+      im3[idx[0][i], idx[1][i]] = img[idx[0][i], idx[1][i]]
+    im2 = im3
+  return im2
+
+def generar_franja(img, alphaR, alphaB):
+  y,x,z = img.shape
+  copyim =img
+  copyim[:,:,0] = scaleim(copyim[:,:,0], alphaB)
+  copyim[:,:,2] = scaleim(copyim[:,:,2], alphaR)
+  return copyim
+
+def corregir_franja(img):
+  k = 0
+  green = img[:,:,1]
+  C = np.empty((len(np.arange(0.8, 1.21, 0.02)),3))
+
+  for alpha in np.arange(0.8, 1.21, 0.02):
+    alpha = round(alpha,2)
+    red = scaleim(img[:,:,2], 1/alpha)
+    ind = np.where(red > 0)
+    C[k][0] = corr2(red[ind[0][0]:ind[0][-1], ind[1][0]:ind[1][-1]], green[ind[0][0]:ind[0][-1], ind[1][0]:ind[1][-1]])
+    blue = scaleim(img[:,:,0], 1/alpha)
+    ind = np.where(blue > 0)
+    C[k][1] = corr2(blue[ind[0][0]:ind[0][-1], ind[1][0]:ind[1][-1]], green[ind[0][0]:ind[0][-1], ind[1][0]:ind[1][-1]])
+    C[k][2] = alpha
+    k += 1
+  maxval = np.max(C[:,0])
+  maxindR = np.argmax(C[:,0])
+  maxval = np.max(C[:,1])
+  maxindB = np.argmax(C[:,1])
+  alphaR = C[maxindR,2]
+  alphaB = C[maxindB,2]
+  print("Las alphas de aberracion de esta images son rojo: {}, azul:{}".format(alphaR, alphaB)
+  imCORRECT = copyim
+  imCORRECT[:,:,2] = scaleim(img[:,:,2], 1/alphaR)
+  imCORRECT[:,:,0] = scaleim(img[:,:,0], 1/alphaB)
+  return imCORRECT
