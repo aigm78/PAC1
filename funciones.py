@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 import skimage.measure 
 
 
-def plot(img, name, color_legend, fig_scatter):
+def plot(img, name, color_legend, fig_scatter, mask = None):
   """Creamos una grafica donde cada banda de la imagen es visualizada separadamente
       de esta manera podemos ver que bandas capturan mejor la aberracion
       img: imagen 
       name:nombre del plot
       color_legend: lista con los nombres de cada subplot
-      fig_scatter: scatterplot de las bandas objeto plt"""
+      fig_scatter: scatterplot de las bandas objeto plt
+      mask: opcional se anade si se quiere ver en el histograma solo una parte de la imagen"""
   fig = plt.figure(figsize=(25,5))
   fig.suptitle(name + ': RGB Space', fontsize=16)
   ax = fig.add_subplot(1, 5, 1)
@@ -22,7 +23,10 @@ def plot(img, name, color_legend, fig_scatter):
     ax.imshow(img[:,:,idx]) 
     ax.set_xlabel(color_legend[idx],fontsize=14)
   ax = fig.add_subplot(1, 5, 5) 
-  ax = fig_scatter
+  for idx, col in enumerate(color):
+    histr = cv2.calcHist([img],[idx],mask,[256],[0,256])
+    ax.plot(histr, color = col)
+    ax.xlim([0,256])
   plt.show()
 
 def plot_scatter(img, name, color):
