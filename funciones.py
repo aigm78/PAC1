@@ -22,6 +22,32 @@ def plot(img, name, color_legend):
     ax.set_xlabel(color_legend[idx],fontsize=14)
   plt.show()
 
+def plot2(img, name, space):
+  """Creamos una grafica donde cada banda de la imagen es visualizada separadamente
+      de esta manera podemos ver que bandas capturan mejor la aberracion
+      img: imagen 
+      name:nombre del plot
+      space: espacio de color que queremos usar para pintar, toma 2 valores posibles 'LAB' o 'RGB' """
+  fig = plt.figure(figsize=(12,3))
+  fig.suptitle(name, fontsize=16)
+  ax = fig.add_subplot(1, 4, 1)
+  if space == 'RGB':
+    img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    color_legend = ['R: Rojo','G: Verde', 'B: Azul']
+  elif space == 'LAB':
+    img_bgr = cv2.cvtColor(img, cv2.COLOR_LAB2BGR)
+    color_legend = ['L: Luminosidad','A: Verde-Rojo', 'B: Azul-Amarillo']
+   else:
+    img_bgr = img
+    color_legend = ['B: Azul','G: Verde','R: Rojo']
+  ax.imshow(img_bgr)
+  ax.set_xlabel(name,fontsize=14)
+  for idx in range(img.shape[2]):
+    ax = fig.add_subplot(1, 4, idx+2) 
+    ax.imshow(img[:,:,idx]) 
+    ax.set_xlabel(color_legend[idx],fontsize=14)
+  plt.show()
+  
 def plot_scatter(img, name, color, mask = None):
   """Creamos una grafica donde cada banda de la imagen es representada en forma de histograma
       esto nos ayuda a ver la distribucion de los valores
